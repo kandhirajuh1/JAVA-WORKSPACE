@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd
+http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd">
+
+	<!-- <bean class="org.springframework.web.servlet.mvc.support.ControllerClassNameHandlerMapping"/> 
+ -->
+ 
+	<context:annotation-config />
+	<mvc:annotation-driven />
+	<context:component-scan base-package="com.ck.rewards.controller" />
+	<context:component-scan base-package="com.ck.rewards.service" />
+	<context:component-scan base-package="com.ck.rewards.dao" />
+
+	<!-- <bean id="loginDao" class="com.ck.rewards.dao.LoginDAO" />
+	<bean id="loginService" class="com.ck.rewards.service.LoginService"/>
+	 <bean id="loginDao" class="com.ck.rewards.dao.LoginDAO" /> 
+		<property name="loginDao" ref="loginDao" />
+		</bean> -->
+		
+	<bean id="jndiDatasource" class="org.springframework.jndi.JndiObjectFactoryBean">
+		<property name="jndiName" value="ckrewardsprogram" />
+		<property name="jndiEnvironment">
+
+			<props>
+				<prop key="java.naming.factory.initial">weblogic.jndi.WLInitialContextFactory</prop>
+				<prop key="java.naming.provider.url">t3://localhost:3001</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="jndiDatasource" />
+		<property name="packagesToScan" value="com.ck.rewards.entity" />
+		<property name="hibernateProperties">
+			<props>
+				<prop key="show_sql">true</prop>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+			</props>
+		</property>
+
+	</bean>
+
+	<tx:annotation-driven />
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver"
+		p:prefix="/WEB-INF/jsp/" p:suffix=".jsp" />
+
+</beans>  
